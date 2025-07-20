@@ -1,6 +1,9 @@
-Livekit-chatterbox
-Created livekit-plugin for chatterbox(https://github.com/resemble-ai/chatterbox) -> [SCRIPT]client.py 
-Created a conversational ai agent with livekit-playground -> [SCRIPT] agent.py
+##Livekit-chatterbox
+<br>
+##Created livekit-plugin for chatterbox(https://github.com/resemble-ai/chatterbox) -> [SCRIPT]client.py 
+<br>
+##Created a conversational ai agent with livekit-playground -> [SCRIPT] agent.py
+<br>
 Refer Screenshots to see the logs 
 <img width="1897" height="944" alt="image" src="https://github.com/user-attachments/assets/1b4debfd-ca12-492a-953d-7a63258a754f" />
 #SERVER LOGS
