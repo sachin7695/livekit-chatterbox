@@ -70,7 +70,7 @@ class OptimizedChatterboxServer:
         
         # Pre-warm the model with voice prompt if provided
         if voice_prompt_path:
-            logger.info(f"🎭 Loading voice prompt from: {voice_prompt_path}")
+            logger.info(f"Loading voice prompt from: {voice_prompt_path}")
             self._prepare_model()
     
     def _prepare_model(self):
@@ -90,8 +90,7 @@ class OptimizedChatterboxServer:
                         exaggeration=self.default_params["exaggeration"]
                     )
                 
-                # Run a tiny test synthesis to ensure everything is loaded
-                logger.info("🧪 Running test synthesis to warm up model...")
+                logger.info("Running test synthesis to warm up model...")
                 test_start = time.time()
                 try:
                     with torch.no_grad():
@@ -113,7 +112,7 @@ class OptimizedChatterboxServer:
         async with connection_semaphore:
             client_id = f"{websocket.remote_address[0]}:{websocket.remote_address[1]}"
             self.total_requests += 1
-            logger.info(f"🔗 New connection #{self.total_requests} from {client_id}")
+            logger.info(f"New connection #{self.total_requests} from {client_id}")
 
             # Ensure model is ready before processing any requests
             if not self.model_loaded:
@@ -125,7 +124,7 @@ class OptimizedChatterboxServer:
                     #only one active loop for the web socket receive
                     raw = await websocket.recv() 
                 except (ConnectionClosedOK, ConnectionClosedError):
-                    logger.info(f"🔌 Client {client_id} disconnected.")
+                    logger.info(f"Client {client_id} disconnected.")
                     break
 
                 # Parse JSON
@@ -153,7 +152,7 @@ class OptimizedChatterboxServer:
                         "error": f"Unknown message type: {msg_type}"
                     }))
 
-            logger.info(f"🧹 Cleaned up connection from {client_id}")
+            logger.info(f"Cleaned up connection from {client_id}")
     
     async def process_message(self, websocket: WebSocketServerProtocol, data: Dict[str, Any]):
         """Process incoming WebSocket messages"""
@@ -270,8 +269,8 @@ class OptimizedChatterboxServer:
         # Merge with default params
         synthesis_params = {**self.default_params, **params}
         
-        logger.info(f"🎵 Starting stream session: {session_id}")
-        logger.info(f"📊 Model loaded: {self.model_loaded}")
+        logger.info(f"Starting stream session: {session_id}")
+        logger.info(f"Model loaded: {self.model_loaded}")
         
         # Send acknowledgment
         await safe_send(websocket, {
@@ -334,7 +333,7 @@ class OptimizedChatterboxServer:
                                 logger.info(f"Sent chunk {chunk_index}, len={len(audio_chunk)}")
                                 chunk_index += 1
                             except (ConnectionClosedOK, ConnectionClosedError, AttributeError) as e:
-                                logger.warning(f"🔌 WebSocket closed or error during sending chunk: {e}")
+                                logger.warning(f"WebSocket closed or error during sending chunk: {e}")
                                 stream_active = False
                                 break
                         text_buffer = ""
@@ -356,7 +355,7 @@ class OptimizedChatterboxServer:
                                 logger.info(f"Sent chunk {chunk_index}, len={len(audio_chunk)}")
                                 chunk_index += 1
                             except (ConnectionClosedOK, ConnectionClosedError, AttributeError) as e:
-                                logger.warning(f"🔌 WebSocket closed or error during sending chunk: {e}")
+                                logger.warning(f"WebSocket closed or error during sending chunk: {e}")
                                 break
                         text_buffer = ""
                     await safe_send(websocket, {
@@ -382,8 +381,8 @@ class OptimizedChatterboxServer:
         params: Dict[str, Any]
     ):
         """Stream synthesis for given text"""
-        logger.info(f"🎵 Streaming synthesis for session {session_id}: {text[:50]}...")
-        logger.info(f"⚡ Using pre-loaded model for streaming")
+        logger.info(f"Streaming synthesis for session {session_id}: {text[:50]}...")
+        logger.info(f"Using pre-loaded model for streaming")
         
         stream_start = time.time()
         logger.info(f"websocket type in stream_synthesis: {type(websocket)}")
@@ -393,7 +392,6 @@ class OptimizedChatterboxServer:
             
             # Run streaming synthesis with pre-loaded model
             async for audio_chunk, metrics in self.async_generate_stream(text, params):
-                # INSTEAD OF checking websocket.closed, just try sending and catch exceptions
 
                 # Send audio chunk header
                 header = json.dumps({
@@ -413,7 +411,7 @@ class OptimizedChatterboxServer:
                     logger.info(f"Sent chunk {chunk_index}, len={len(audio_chunk)}")
                     chunk_index += 1
                 except (ConnectionClosedOK, ConnectionClosedError, AttributeError) as e:
-                    logger.warning(f"🔌 WebSocket closed or error during sending chunk: {e}")
+                    logger.warning(f"WebSocket closed or error during sending chunk: {e}")
                     break  # Exit the chunk loop on any send error
                     
                 except Exception as e:
@@ -423,7 +421,7 @@ class OptimizedChatterboxServer:
             stream_time = time.time() - stream_start
             logger.info(f"Stream synthesis completed in {stream_time:.3f}s")
         except (ConnectionClosedOK, ConnectionClosedError):
-            logger.info(f"🔌 WebSocket closed during stream synthesis for session {session_id}")
+            logger.info(f"WebSocket closed during stream synthesis for session {session_id}")
         except Exception as e:
             logger.error(f"Stream synthesis error: {e}")
     
@@ -431,7 +429,6 @@ class OptimizedChatterboxServer:
         """
         Async wrapper for generate_stream with proper StopIteration handling
         
-        FIXED: Uses torch.no_grad() instead of inference_mode and properly handles tensor copying
         """
         loop = asyncio.get_event_loop()
         
@@ -511,7 +508,7 @@ async def main():
     else:
         device = args.device
     
-    logger.info(f"🖥️  Using device: {device}")
+    logger.info(f"Using device: {device}")
     
     # Load model ONCE at startup
     logger.info("Loading Chatterbox model at startup...")
