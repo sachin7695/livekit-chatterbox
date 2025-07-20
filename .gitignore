@@ -1,0 +1,13 @@
+
+jarod/
+chatterbox-finetuning/
+.env
+
+chatterbox-finetuning/
+chatterbox-streaming/
+jarod/
+models/
+.env
+*.txt
+__pycache__/
+plugin_chatterbox.py
